@@ -3,7 +3,11 @@ const path = require('path');
 const PORT = process.env.PORT || 3001;
 const fs = require('fs');
 const app = express();
+const uniqid = require('uniqid');
 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static('public'));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/index.html'));
@@ -21,16 +25,25 @@ app.get('/api/notes', (req, res) => {
     res.json(results);
   });
 
-  app.post('/api/notes', (req, res) => {
-    // set id based on what the next index of the array will be
-    req.body.id = animals.length.toString();
+app.post('/api/notes', (req, res) => {
+    let newNote = req.body;
+    // set unique id
+    newNote.id = uniqid();
   
-    if (!validateAnimal(req.body)) {
-      res.status(400).send('The animal is not properly formatted.');
-    } else {
-      const animal = createNewAnimal(req.body, animals);
-      res.json(animal);
-    }
+    readFile("./db/db.json", "utf8")
+    .then((result, err) => {
+    return Promise.resolve(JSON.parse(result));
+  })
+  
+    .then(data => {
+          //write new file
+          writeFile("./db/db.json", JSON.stringify(data));
+          res.json(newNote);
+    })      
+    .catch(err =>{
+        if(err) throw err;
+    
+      })
   });
 
 

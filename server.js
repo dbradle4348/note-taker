@@ -9,6 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
+//html routes
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html'));
 });
@@ -17,6 +18,11 @@ app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, './public/notes.html'));
 });
 
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, './public/index.html'))
+});
+
+//api routes
 app.get('/api/notes', (req, res) => {
     fs.readFile('./db/db.json', (err, data) => {
       if (err) throw err;
@@ -26,9 +32,7 @@ app.get('/api/notes', (req, res) => {
   });
 
 app.post('/api/notes', (req, res) => {
-    const userNotes = req.body;
-    // set unique id
-    newNote.id = uniqid();
+    const newNote = req.body;
   
     fs.readFile("./db/db.json", (err, data) => {
       if (err) throw err;
@@ -39,11 +43,13 @@ app.post('/api/notes', (req, res) => {
         number++;
         return dbData;
       });
+      console.log(dbData);
       stringData = JSON.stringify(dbData);
       fs.writeFile('./db/db.json', stringData, (err, data) => {
         if (err) throw err;
       });
     });
+    res.send("Note posted!")
 });
 
 

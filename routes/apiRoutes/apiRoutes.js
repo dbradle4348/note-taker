@@ -12,13 +12,13 @@ router.get('/notes', (req, res) => {
   });
 
 //post routes
-router.post('/notes', (req, res) => {
-    const userNotes = req.body;
+router.post('/api/notes', (req, res) => {
+    const newNote = req.body;
   
     fs.readFile("./db/db.json", (err, data) => {
       if (err) throw err;
       dbData = JSON.parse(data);
-      dbData.push(userNotes);
+      dbData.push(newNote);
       let number = 1;
       dbData.forEach((note, index) => {
         note.id = number;
@@ -26,8 +26,8 @@ router.post('/notes', (req, res) => {
         return dbData;
       });
       console.log(dbData);
-      stringData = JSON.stringify(dbData);
-      fs.writeFile('../../db/db.json', stringData, (err, data) => {
+      noteData = JSON.stringify(dbData);
+      fs.writeFile('./db/db.json', noteData, (err, data) => {
         if (err) throw err;
       });
     });

@@ -27,7 +27,7 @@ router.post('/notes', (req, res) => {
       });
       console.log(dbData);
       stringData = JSON.stringify(dbData);
-      fs.writeFile('./db/db.json', stringData, (err, data) => {
+      fs.writeFile('../../db/db.json', stringData, (err, data) => {
         if (err) throw err;
       });
     });
